@@ -121,8 +121,8 @@ export default class extends Phaser.State {
   }
 
   fireWeapon() {
-    if (this.game.bonus.trippleFire != null && this.game.bonus.trippleFire <= this.game.time.now + 5000) {
-      return this.trippeFire()
+    if (this.game.bonus.trippleFire.timeOut != null && this.game.time.now <= this.game.bonus.trippleFire.timeOut) {
+      return this.trippleFire()
     }
 
     let fireRate = 200
@@ -132,19 +132,23 @@ export default class extends Phaser.State {
     }
 
     if (this.game.time.now > this.bulletTime) {
-      let bullet = new Bullet(
-        this.game,
-        this.ship.x,
-        this.ship.y
-      )
-
-      this.bullets.add(bullet)
+      this.bullets.add(new Bullet(this.game, this.ship.x, this.ship.y))
       this.bulletTime = this.game.time.now + fireRate
     }
   }
 
   trippleFire() {
-    console.log('tripple fire!')
+    if (this.game.time.now > this.bulletTime) {
+      let bullet1 = new Bullet(this.game, this.ship.x, this.ship.y)
+      let bullet2 = new Bullet(this.game, this.ship.x, this.ship.y, 10)
+      let bullet3 = new Bullet(this.game, this.ship.x, this.ship.y, -10)
+
+      this.bullets.add(bullet1)
+      this.bullets.add(bullet2)
+      this.bullets.add(bullet3)
+
+      this.bulletTime = this.game.time.now + 200
+    }
   }
 
   bulletHitsAsteroid(bullet, asteroid) {
@@ -170,12 +174,12 @@ export default class extends Phaser.State {
   shipCollectsBonus(ship, bonus) {
     switch (bonus.type) {
       case 0:
-        this.game.bonus.rapidFire.timeOut = this.game.time.now + 5000
-        break
-      case 1:
         this.game.bonus.trippleFire.timeOut = this.game.time.now + 5000
         break
-      case 3:
+      case 1:
+        this.game.bonus.rapidFire.timeOut = this.game.time.now + 5000
+        break
+      case 2:
       this.game.bonus.bomb.quantity++
         break
     }

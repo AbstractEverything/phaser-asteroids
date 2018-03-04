@@ -6,7 +6,7 @@ class Bonus extends Phaser.Sprite {
         super(game, x, y, 'bonus')
         this.setUpPhysics()
         this.events.onOutOfBounds.add(this.bonusBelow, this)
-        this.type = _.random(0, 3)
+        this.type = _.random(0, 2)
     }
 
     setUpPhysics() {
